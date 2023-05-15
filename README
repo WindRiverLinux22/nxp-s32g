@@ -278,7 +278,7 @@ NOTICE:
     And for detail informations of the boot description, please refer to the
     section:
         "4 How to boot"
-    in SDK user manual "S32Gx_LinuxBSP_35.0_User_Manual.pdf", the S32Gx is
+    in SDK user manual "S32Gx_LinuxBSP_36.0_User_Manual.pdf", the S32Gx is
     S32G2 or S32G3 accordingly.
 
 5. Creating Partitioned Images(WIC)
@@ -345,7 +345,7 @@ NOTICE:
     The SD WIC images can be burnt into SD or eMMC devices to boot the S32G
     boards, and please refer to section
         "4 How to boot"
-    in SDK user manual "S32Gx_LinuxBSP_35.0_User_Manual.pdf"(S32Gx is S32G2
+    in SDK user manual "S32Gx_LinuxBSP_36.0_User_Manual.pdf"(S32Gx is S32G2
     or S32G3 accordingly), to get the detail boot device information.
 
 6. Features
@@ -390,8 +390,8 @@ NXP's Flexera, customers have to contact NXP to get the access to Flexera.
 Before to use the HSE, HSE firmware must be installed and the key catalogs must
 be formatted.
 
-If you get permission to use HSE, you can get packages "HSE_FW_S32G2_0_1_0_5.exe"
-and "HSE_FW_DEMOAPP_S32G2_0_1_0_5.exe" for S32G274A, "HSE_FW_S32G3_0_2_16_1"
+If you get permission to use HSE, you can get packages "HSE_FW_S32G2_0_1_0_9.exe"
+and "HSE_FW_DEMOAPP_S32G2_0_1_0_9.exe" for S32G274A, "HSE_FW_S32G3_0_2_16_1"
 and "HSE_DEMOAPP_S32G3_0_2_16_1" for S32G399A from NXP's official website. you
 can find the HSE firmware pink images and the related interface directory from
 the related HSE_FW_S32Gx_xxx.exe. The interface directory will be used when
@@ -429,7 +429,7 @@ In the following steps, take S32G274A SOC as example:
 
 There will be a display below on the serial to confirm HSE is up and running.
 
-	HSE FW Version: 0.1.0_1.0.5
+	HSE FW Version: 0.1.0_1.0.9
 	HSE FW up and running! Status:
 	      HSE_STATUS_RNG_INIT_OK
 	      HSE_STATUS_INIT_OK
@@ -582,7 +582,7 @@ NXP to get permission and download the PFE firmware.
 
 PFE is a firmware-based module. Load the firmware before using PFE.
 The firmwares name are "s32g_pfe_class.fw" and "s32g_pfe_util.fw" with
-version 1.5.0, which have to be downloaded from NXP Software.
+version 1.6.0, which have to be downloaded from NXP Software.
 
 6.3.2 Steps to verify
 ---------------------
@@ -615,7 +615,7 @@ more information.
 
 About the detailed pfe port map information can refer to the chapter "Ethernet
 Hardware Support on S32G2" and "Ethernet Hardware Support on S32G3" of the
-documents of Linux BSP 35.0 User Manual for S32G2 and S32G3 platforms.
+documents of Linux BSP 36.0 User Manual for S32G2 and S32G3 platforms.
 
 Note:
 
@@ -672,7 +672,7 @@ There are 4 LLCE firmwares:
 	ppe_tx.bin
 	ppe_rx.bin
 
-with version 1.0.5 to be downloaded from NXP Software.
+with version 1.0.6 to be downloaded from NXP Software.
 
 6.4.2 LLCE CAN verify steps
 ---------------------------
@@ -730,7 +730,7 @@ details of ATF, please refer to the sections
 and
 	"22 Power Management"
 
-in "S32G2_Linux_BSP35.0_User_Manual.pdf".
+in "S32G2_Linux_BSP36.0_User_Manual.pdf".
 
 NOTICE:
     For hardware reasons, the power management features are only supported
@@ -856,7 +856,7 @@ For ATF feature, there are some known issues.
      Same as SDK, the usb devices can not be identified after STR, because
      the USB driver does not support STR currentlly, there is a STR supported
      driver list in section:
-	"23.3 Suspend to RAM" in "S32G2_Linux_BSP35.0_User_Manual.pdf"
+	"23.3 Suspend to RAM" in "S32G2_Linux_BSP36.0_User_Manual.pdf"
 
      And this list will be updated in future.
 
