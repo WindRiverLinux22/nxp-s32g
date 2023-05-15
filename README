@@ -393,7 +393,9 @@ be formatted.
 If you get permission to use HSE, you can get packages "HSE_FW_S32G2_0_1_0_5.exe"
 and "HSE_FW_DEMOAPP_S32G2_0_1_0_5.exe" for S32G274A, "HSE_FW_S32G3_0_2_16_1"
 and "HSE_DEMOAPP_S32G3_0_2_16_1" for S32G399A from NXP's official website. you
-can find the HSE firmware pink images from the related HSE_FW_S32Gx_xxx.exe.
+can find the HSE firmware pink images and the related interface directory from
+the related HSE_FW_S32Gx_xxx.exe. The interface directory will be used when
+compiling the HSE linux demos as "6.2.3 HSE linux" descriped.
 
 6.2.2 HSE Demo
 --------------
@@ -447,16 +449,59 @@ The steps are as following:
 
  1. Build project with HSE built-in into WIC image
 
-    If users want to use HSE feature in linux, please specify the location
-    of HSE firmware, like the following:
+    If users want to use HSE feature in linux, please specify the following
+    variables, like the following:
 
-	HSE_LOCAL_FIRMWARE_DIR = "/path/to/hse/firmware/for/s32g/boards"
-	HSE_FW_NAME_S32G2 = "name-of-hse-firmware-for-s32g2"
-	HSE_FW_NAME_S32G3 = "name-of-hse-firmware-for-s32g3"
+        HSE_LOCAL_FIRMWARE_DIR = "/path/to/hse/firmware/for/s32g/boards"
+        HSE_FW_VERSION_S32G2 = "firmware-version-for-s32g2"
+        HSE_FW_VERSION_S32G3 = "firmware-version-for-s32g3"
+        HSE_FW_NAME_S32G2 = "firmware-name-for-s32g2"
+        HSE_FW_NAME_S32G3 = "firmware-name-for-s32g3"
 
-    in the project <build-dir>/conf/local.conf, the HSE_LOCAL_FIRMWARE_DIR
-    is the HSE firmwares location and HSE_FW_NAME_S32G2 and HSE_FW_NAME_S32G3
-    are the real names of HSE firmware for S32G2 and S32G3 boards.
+    and
+        IMAGE_INSTALL += "pkcs11-hse pkcs11-hse-examples"
+
+    in the project <build-dir>/conf/local.conf.
+
+    In detail, The HSE_LOCAL_FIRMWARE_DIR is the top directory for HSE
+    firmwares location, the HSE_FW_<VERSION, NAME>_S32G2, and
+    HSE_FW_<VERSION, NAME>_S32G3 are firmware version and real firmware
+    name for S32G2 and S32G3 respectively.
+
+    And in acctually, the HSE_FW_VERSION_<S32G2, S32G3> are subdirectories of
+    HSE_LOCAL_FIRMWARE_DIR. And in this subdirectory, there should have
+    firmware interface directory and firmware binary. Because the interface
+    directory includes header files, which are needed when compiling pkcs11-hse
+    demos, and they are matched with the firmware binary with same version,
+    so they should be under the HSE_FW_VERSION_<S32G2, S32G3> subdirectoy
+    together. Users can get the interface directory and firmware binary from
+    HSE_FW_S32Gx_xxx.exe.
+
+    By setting all the above HSE related variables, users can choose different
+    HSE firmware versions to use. The current default version for S32G2 is
+    "0.1.0.9" and for S32G3 is "0.2.16.1".
+
+    Take the following HSE firmware directory layout as example:
+
+        xxx/firmwares/hse
+        ├── 0.1.0.9
+        │   ├── interface
+        │   └── rev2.0_s32g2xx_xxx_1.0.9_xxx.bin.pink
+        └── 0.2.16.1
+            ├── interface
+            └── rev1.0_s32g3xx_xxx_2.16.1_xxx.bin.pink
+
+    As shown above, the "interface" and firmware binary *.bin.pink file are
+    put together under firmware version subdirectory. And the HSE variables
+    should be:
+        HSE_LOCAL_FIRMWARE_DIR = "xxx/firmwares/hse"
+        HSE_FW_VERSION_S32G2 = "0.1.0.9"
+        HSE_FW_VERSION_S32G3 = "0.2.16.1"
+        HSE_FW_NAME_S32G2 = "rev2.0_s32g2xx_xxx_1.0.9_xxx.bin.pink"
+        HSE_FW_NAME_S32G3 = "rev1.0_s32g3xx_xxx_2.16.1_xxx.bin.pink"
+        IMAGE_INSTALL += "pkcs11-hse pkcs11-hse-examples"
+
+    in project conf/local.conf.
 
     Then build the project as normal:
 
@@ -513,6 +558,10 @@ The steps are as following:
 	hse-uio 40210000.mu0b: device hse-uio released
 
 NOTICE:
+
+    Please make sure that the interface directory and firmware binary file are
+    in same version and be put together under HSE_FW_VERSION_<S32G2, S32G3>
+    subdirectory, or else, there may be unexpected issues in build or runtime.
 
     The linux HSE & PKCS#11 demo supports all S32G274A and S32G399A boards now.
 
