@@ -19,7 +19,7 @@ make_nxp_s32g_wic() {
         else
             dd if=$atf_s32 of=$ofname conv=notrunc seek=512 skip=512 oflag=seek_bytes iflag=skip_bytes
         fi
-        if [ $plat = "aptiv_cvc_sousa" ] || [ $plat = "aptiv_cvc_fl"  ]; then
+        if [ $plat = "aptiv_cvc_fl"  ]; then
             mv -f $ofname ${IMAGE_NAME}.rootfs.wic
             break
         fi
@@ -34,7 +34,7 @@ make_nxp_s32g_wic() {
         ln -sf $ofname $linkname
     done
 
-    if [ $plat != "aptiv_cvc_sousa" ] && [ $plat != "aptiv_cvc_fl" ]; then
+    if [ $plat != "aptiv_cvc_fl" ]; then
         rm -f ${IMAGE_LINK_NAME}.wic
         rm -f ${IMAGE_NAME}.rootfs.wic
     fi
@@ -50,8 +50,6 @@ BOOTFS_EXTRA_CMD ?= " \
             plat="evb3"; \
         elif [ $plat = "s32g2xxaevb" ]; then \
             plat="evb"; \
-        elif [ $plat = "aptiv_cvc_sousa" ]; then \
-            plat="aptiv"; \
         else \
             plat="$(echo $plat | grep -o '....$')"; \
         fi; \

@@ -15,7 +15,7 @@ make_m7_sample_wic() {
         m7_ofname="${IMAGE_BASENAME}-${MACHINE}-${plat}${IMAGE_VERSION_SUFFIX}-m7.rootfs.wic"
         cp ${IMAGE_NAME}.rootfs.wic ${m7_ofname}
         dd if=$atf_s32_m7 of=$m7_ofname conv=notrunc seek=512 skip=512 oflag=seek_bytes iflag=skip_bytes
-        if [ $plat = "aptiv_cvc_sousa" ] || [ $plat = "aptiv_cvc_fl" ]; then
+        if [ $plat = "aptiv_cvc_fl" ]; then
             mv -f $m7_ofname ${IMAGE_LINK_NAME}-m7.wic
             break
         fi
