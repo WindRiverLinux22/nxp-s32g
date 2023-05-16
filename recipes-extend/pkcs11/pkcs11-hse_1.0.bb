@@ -7,6 +7,7 @@ LIC_FILES_CHKSUM = " \
 "
 
 DEPENDS = "openssl libp11"
+RDEPENDS:${PN} = "opensc pcsc-lite ccid"
 
 URL ?= "git://github.com/nxp-auto-linux/pkcs11-hse.git;protocol=https"
 BRANCH ?= "release/bsp36.0"
@@ -36,11 +37,14 @@ EXTRA_OEMAKE += " \
 
 CFLAGS += "${HOST_CC_ARCH}${TOOLCHAIN_OPTIONS}"
 
+
+PKCS_DEMO_BINS = "pkcs-keyop hse-encrypt hse-sysimg pkcs-key-provision hse-secboot \
+                  pkcs-cipher pkcs-msg-digest pkcs-sig"
+
 do_compile() {
 
 
     plats="s32g2 s32g3"
-    bins="pkcs-keyop hse-encrypt hse-sysimg pkcs-key-provision hse-secboot"
     for plat in $plats; do
 
         mkdir -p ${S}/hse-fw/${plat}
@@ -62,7 +66,7 @@ do_compile() {
         #copy result files to related dir
         mkdir -p ${S}/examples/${plat}
 
-        for bin in ${bins}; do
+        for bin in ${PKCS_DEMO_BINS}; do
             cp ${S}/examples/${bin}/${bin} ${S}/examples/${plat}
         done
 
@@ -81,11 +85,10 @@ do_install() {
     install -m 0644 ${S}/libpkcs/*.h ${D}${includedir}
 
     plats="s32g2 s32g3"
-    bins="pkcs-keyop hse-encrypt hse-sysimg pkcs-key-provision hse-secboot"
     for plat in $plats; do
 
         install -d ${D}${bindir}/${plat}/
-        for bin in ${bins}; do
+        for bin in ${PKCS_DEMO_BINS}; do
             install -m 0755 ${S}/examples/${plat}/${bin} ${D}${bindir}/${plat}/
         done
 
@@ -94,15 +97,13 @@ do_install() {
 
 pkg_postinst_ontarget:${PN}() {
 
-bins="pkcs-keyop hse-encrypt hse-sysimg pkcs-key-provision hse-secboot"
 if grep -q "s32g3" /sys/firmware/devicetree/base/compatible ; then
     plat="s32g3"
 else
     plat="s32g2"
 fi
 
-echo  "plat is ${plat}"
-for bin in ${bins}; do
+for bin in ${PKCS_DEMO_BINS}; do
     if [ -f "/usr/bin/${bin}" ]; then
         continue
     fi

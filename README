@@ -459,7 +459,7 @@ The steps are as following:
         HSE_FW_NAME_S32G3 = "firmware-name-for-s32g3"
 
     and
-        IMAGE_INSTALL += "pkcs11-hse pkcs11-hse-examples"
+        IMAGE_INSTALL += "pkcs11-hse pkcs11-hse-examples opensc"
 
     in the project <build-dir>/conf/local.conf.
 
@@ -499,7 +499,7 @@ The steps are as following:
         HSE_FW_VERSION_S32G3 = "0.2.16.1"
         HSE_FW_NAME_S32G2 = "rev2.0_s32g2xx_xxx_1.0.9_xxx.bin.pink"
         HSE_FW_NAME_S32G3 = "rev1.0_s32g3xx_xxx_2.16.1_xxx.bin.pink"
-        IMAGE_INSTALL += "pkcs11-hse pkcs11-hse-examples"
+        IMAGE_INSTALL += "pkcs11-hse pkcs11-hse-examples opensc"
 
     in project conf/local.conf.
 
