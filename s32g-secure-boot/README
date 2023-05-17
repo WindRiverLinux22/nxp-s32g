@@ -105,9 +105,11 @@ Detail steps as below:
 	$ source ./environment-setup-x86_64-wrlinuxsdk-linux
 	$ source ./oe-init-build-env
 	open the conf/local.conf file, and set the HSE firmware file path like below
-	HSE_LOCAL_FIRMWARE_DIR = "<path of including HSE firmware files>"
-	HSE_FW_NAME_S32G2 = "s32g2xx_hse_fw_0.1.0_1.0.5_pb220413.bin.pink"
-	HSE_FW_NAME_S32G3 = "s32g3xx_hse_fw_0.20.0_0.21.0_pb220520.bin.pink"
+	HSE_LOCAL_FIRMWARE_DIR = "/path/to/hse/firmware/for/s32g/boards"
+	HSE_FW_VERSION_S32G2 = "firmware-version-for-s32g2"
+	HSE_FW_VERSION_S32G3 = "firmware-version-for-s32g3"
+	HSE_FW_NAME_S32G2 = "firmware-name-for-s32g2"
+	HSE_FW_NAME_S32G3 = "firmware-name-for-s32g3"
 	below setting for RSA private key is optional
 	FIP_SIGN_KEYDIR = "<path of customer own RSA private key>"
 	HSE_SEC_PRI_KEY = "<name of customer own RSA private key>"
