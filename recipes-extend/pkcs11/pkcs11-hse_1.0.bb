@@ -41,6 +41,13 @@ CFLAGS += "${HOST_CC_ARCH}${TOOLCHAIN_OPTIONS}"
 PKCS_DEMO_BINS = "pkcs-keyop hse-encrypt hse-sysimg pkcs-key-provision hse-secboot \
                   pkcs-cipher pkcs-msg-digest pkcs-sig"
 
+python () {
+    # Skip the recipe if HSE_LOCAL_FIRMWARE_DIR is NULL:
+    firmware_dir = d.getVar('HSE_LOCAL_FIRMWARE_DIR')
+    if not firmware_dir:
+        raise bb.parse.SkipRecipe("Skip the recipe since HSE_LOCAL_FIRMWARE_DIR is not set")
+}
+
 do_compile() {
 
 
