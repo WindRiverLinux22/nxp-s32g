@@ -13,4 +13,4 @@ module_do_install() {
 	install -D "${MDIR}/pfeng-slave.ko" "${INSTALL_DIR}/pfeng-slave.ko"
 }
 
-FILES_${PN} += "${sysconfdir}/modules-load.d/*"
+FILES:${PN} += "${sysconfdir}/modules-load.d/*"

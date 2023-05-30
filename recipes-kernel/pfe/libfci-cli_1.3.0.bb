@@ -22,8 +22,8 @@ CFLAGS:prepend = "-I${S} "
 
 PACKAGES = "${PN} ${PN}-dbg"
 
-RDEPENDS_${PN} = "pfe"
-RDEPENDS_${PN}-dbg = "pfe"
+RDEPENDS:${PN} = "pfe"
+RDEPENDS:${PN}-dbg = "pfe"
 
 do_compile() {
 	cd ${MDIR}
@@ -35,7 +35,7 @@ do_install() {
 	install -m 0755 ${MDIR}/libfci_cli ${D}${bindir}
 }
 
-FILES_${PN} += "${bindir}/libfci_cli"
+FILES:${PN} += "${bindir}/libfci_cli"
 
 COMPATIBLE_MACHINE = "^$"
 COMPATIBLE_MACHINE:nxp-s32g = "nxp-s32g"

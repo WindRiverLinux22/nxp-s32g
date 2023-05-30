@@ -14,7 +14,7 @@ LIBBUILDDIR = "${S}/sw/xfci/libfci/build/${TARGET_SYS}-release"
 CFLAGS:prepend = "-I${S} "
 
 PACKAGES = "${PN} ${PN}-dev ${PN}-staticdev"
-RDEPENDS_${PN} = "pfe"
+RDEPENDS:${PN} = "pfe"
 
 do_compile() {
 	cd ${MDIR}
