@@ -32,6 +32,7 @@ SRC_URI += " \
     file://0001-hse-enable-eFUSE-power-on-s32g399-RDB3-platform.patch \
     file://0001-phy-s32cc-serdes-configure-REF_USE_PAD-bit-during-re.patch \
     file://0001-s32-env-support-for-booting-up-fitImage.patch \
+    file://0001-s32-env-Add-support-to-load-the-initrd-in-mmcboot.patch \
 "
 
 SRCREV = "ec57ab5ab89c86df5749a67a3ef23e7fe28c87a5"

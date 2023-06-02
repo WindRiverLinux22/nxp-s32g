@@ -1,0 +1,45 @@
+From 8c259a39acda155625ef61056059be29adced2d6 Mon Sep 17 00:00:00 2001
+From: Kevin Hao <kexin.hao@windriver.com>
+Date: Wed, 31 May 2023 13:54:25 +0800
+Subject: [PATCH] s32: env: Add support to load the initrd in mmcboot
+
+Add a check in the mmcboot to see if there is a initramfs file, if yes,
+load it automatically.
+
+Upstream-Status: Pending
+
+Signed-off-by: Kevin Hao <kexin.hao@windriver.com>
+---
+ include/configs/s32-cc.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/include/configs/s32-cc.h b/include/configs/s32-cc.h
+index a37264d6ddb7..26842662a681 100644
+--- a/include/configs/s32-cc.h
++++ b/include/configs/s32-cc.h
+@@ -168,12 +168,21 @@
+ 	"loadfitimage=fatload mmc ${mmcdev}:${mmcpart} ${fitimage_addr} ${fitimage}\0" \
+ 	"loadtftpfdt=tftp ${fdt_addr} ${fdt_file};\0" \
+ 	"loadtftpimage=tftp ${loadaddr} ${image};\0" \
++	"initrd_file=initramfs\0" \
+ 	"mmcargs=setenv bootargs console=${console},${baudrate}" \
+ 		" root=${mmcroot} earlycon " EXTRA_BOOT_ARGS "\0" \
++	"loadinitrd=fatload mmc ${mmcdev}:${mmcpart} ${ramdisk_addr} ${initrd_file};\0" \
++	"check_initrd=if test -e mmc ${mmcdev}:${mmcpart} ${initrd_file}; then " \
++				"run loadinitrd; " \
++				"setenv initrd_addr ${ramdisk_addr}; " \
++			"else " \
++				"setenv initrd_addr - ; " \
++			"fi;\0" \
+ 	"mmcboot=echo Booting from mmc ...; " \
+ 		"run mmcargs; " \
++		"run check_initrd; " \
+ 		"if run loadfdt; then " \
+-			"${boot_mtd} ${loadaddr} - ${fdt_addr}; " \
++			"${boot_mtd} ${loadaddr} ${initrd_addr} ${fdt_addr}; " \
+ 		"else " \
+ 			"echo WARN: Cannot load the DT; " \
+ 		"fi;\0" \
+-- 
+2.39.2
+
