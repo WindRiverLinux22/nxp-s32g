@@ -79,28 +79,6 @@ do_deploy() {
 }
 addtask do_deploy after do_install
 
-pkg_postinst_ontarget:${PN} () {
-
-    module_dir="/lib/modules/`uname -r`/kernel/drivers/ipc-shm"
-    mods="ipc-shm-dev ipc-shm-sample ipc-shm-uio"
-
-    [ -d $module_dir ]  || return
-
-    cd ${module_dir}
-    for plat in ${SUPPORTED_PLATS}; do
-        if grep -q $plat /sys/firmware/devicetree/base/compatible; then
-            for m in $mods; do
-                mv -f $m.ko.$plat $m.ko
-            done
-        else
-            rm `echo $mods | sed "s/[^ ]*/&.ko.$plat/g"`
-        fi
-    done
-
-    depmod
-
-}
-
 FILES:${PN} += "${sysconfdir}/modprobe.d/* ${nonarch_base_libdir}/modules/${KERNEL_VERSION}/kernel/drivers/ipc-shm/*.s32g*"
 
 INHIBIT_PACKAGE_STRIP = "1"
@@ -108,3 +86,43 @@ INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
 
 COMPATIBLE_MACHINE = "^$"
 COMPATIBLE_MACHINE:nxp-s32g = "nxp-s32g"
+
+python () {
+    postinst = """
+    if [ -z "$D" ]; then
+        for plat in ${SUPPORTED_PLATS}; do
+            grep -q $plat /sys/firmware/devicetree/base/compatible && break
+        done
+    else
+        plat=${S32G_SOC_VARIANT}
+        [ -z "$plat" ] && exit -1
+    fi
+
+    module_dir="$D${nonarch_base_libdir}/modules/${KERNEL_VERSION}/kernel/drivers/ipc-shm"
+    mods="ipc-shm-dev ipc-shm-sample ipc-shm-uio"
+
+    [ -d $module_dir ]  || return
+
+    cd $module_dir
+    for m in $mods; do
+        mv -f $m.ko.$plat $m.ko
+        rm -f $m.ko.*
+    done
+
+    if [ -z "$D" ]; then
+        depmod -a ${KERNEL_VERSION}
+    else
+        depmodwrapper -a -b $D ${KERNEL_VERSION} ${KERNEL_PACKAGE_NAME}
+    fi
+"""
+
+    pn = d.getVar('PN');
+
+    if bb.utils.contains('IMAGE_FEATURES', 'read-only-rootfs', True, False, d):
+        if d.getVar('S32G_SOC_VARIANT') is None:
+            bb.fatal("You have to set S32G_SOC_VARIANT for a read only rootfs")
+
+        d.setVar('pkg_postinst:%s' % pn, postinst)
+    else:
+        d.setVar('pkg_postinst_ontarget:%s' % pn, postinst)
+}
