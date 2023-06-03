@@ -64,33 +64,51 @@ do_deploy() {
 }
 
 
-pkg_postinst_ontarget:${PN} () {
+python () {
+    postinst = """
+    if [ -z "$D" ]; then
+        if grep -q "s32g3" /sys/firmware/devicetree/base/compatible; then
+            plat=s32g3
+        else
+            plat=s32g2
+        fi
+    else
+        [ -z "${S32G_SOC_VARIANT}" ] && exit -1
+        plat=${S32G_SOC_VARIANT}
+    fi
 
-bins="dte.bin frpe.bin ppe_tx.bin ppe_rx.bin"
-for bin in ${bins}; do
-        if [ -f "/lib/firmware/${bin}" ]; then
+    bins="dte.bin frpe.bin ppe_tx.bin ppe_rx.bin"
+    for bin in $bins; do
+        if [ -f "$D/lib/firmware/$bin" ]; then
                 continue
         fi
 
-        if grep -q "s32g3" /sys/firmware/devicetree/base/compatible ; then
-                ln -s /lib/firmware/llce_fw_s32g3/${bin} /lib/firmware/${bin}
-        else
-                ln -s /lib/firmware/llce_fw_s32g2/${bin} /lib/firmware/${bin}
-        fi
+        ln -rs $D/lib/firmware/llce_fw_$plat/$bin $D/lib/firmware/$bin
+    done
 
-done
+    if [ -z "$D" ]; then
+        mod_list="llce_can llce_core llce_mailbox"
+        for mod in $mod_list; do
+                if grep -wq "^$mod" /proc/modules ; then
+                        rmmod $mod;
+                fi
+        done
 
-mod_list="llce_can llce_core llce_mailbox"
-for mod in $mod_list; do
-        if grep -wq "^$mod" /proc/modules ; then
-                rmmod $mod;
-        fi
-done
+        for mod in $mod_list; do
+                modprobe $mod
+        done
+    fi
+"""
 
-for mod in $mod_list; do
-        modprobe $mod
-done
+    pn = d.getVar('PN');
 
+    if bb.utils.contains('IMAGE_FEATURES', 'read-only-rootfs', True, False, d):
+        if d.getVar('S32G_SOC_VARIANT') is None:
+            bb.fatal("You have to set S32G_SOC_VARIANT for a read only rootfs")
+
+        d.setVar('pkg_postinst:%s' % pn, postinst)
+    else:
+        d.setVar('pkg_postinst_ontarget:%s' % pn, postinst)
 }
 
 # do_package_qa throws error "QA Issue: Architecture did not match"
