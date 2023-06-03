@@ -46,6 +46,42 @@ python () {
     firmware_dir = d.getVar('HSE_LOCAL_FIRMWARE_DIR')
     if not firmware_dir:
         raise bb.parse.SkipRecipe("Skip the recipe since HSE_LOCAL_FIRMWARE_DIR is not set")
+
+    # The post installation script for pkcs11-hse-examples
+    postinst = """
+    if [ -z "$D" ]; then
+        if grep -q "s32g3" /sys/firmware/devicetree/base/compatible ; then
+            plat="s32g3"
+        else
+            plat="s32g2"
+        fi
+    else
+        [ -z "${S32G_SOC_VARIANT}" ] && exit -1
+        plat=${S32G_SOC_VARIANT}
+    fi
+
+    for bin in ${PKCS_DEMO_BINS}; do
+        if [ -f "$D/usr/bin/$bin" ]; then
+            continue
+        fi
+
+        cp $D/usr/bin/$plat/$bin $D/usr/bin/$bin
+    done
+
+    # remove the unneeded directories
+    rm -rf $D/usr/bin/s32g2
+    rm -rf $D/usr/bin/s32g3
+"""
+
+    pn = d.getVar('PN');
+
+    if bb.utils.contains('IMAGE_FEATURES', 'read-only-rootfs', True, False, d):
+        if d.getVar('S32G_SOC_VARIANT') is None:
+            bb.fatal("You have to set S32G_SOC_VARIANT for a read only rootfs")
+
+        d.setVar('pkg_postinst:%s-examples' % pn, postinst)
+    else:
+        d.setVar('pkg_postinst_ontarget:%s-examples' % pn, postinst)
 }
 
 do_compile() {
@@ -100,28 +136,6 @@ do_install() {
         done
 
     done
-}
-
-pkg_postinst_ontarget:${PN}() {
-
-if grep -q "s32g3" /sys/firmware/devicetree/base/compatible ; then
-    plat="s32g3"
-else
-    plat="s32g2"
-fi
-
-for bin in ${PKCS_DEMO_BINS}; do
-    if [ -f "/usr/bin/${bin}" ]; then
-        continue
-    fi
-
-    cp /usr/bin/${plat}/${bin} /usr/bin/${bin}
-done
-
-# remove the unneeded directories
-rm -rf /usr/bin/s32g2
-rm -rf /usr/bin/s32g3
-
 }
 
 PACKAGES =+ "${PN}-examples "
