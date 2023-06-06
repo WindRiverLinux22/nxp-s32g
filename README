@@ -1085,3 +1085,15 @@ If users want to enable parallel secure boot mode, please add below contents in 
 
 Note:
 The parallel boot mode only can be supported under secure boot mode.
+
+6.9 dm-verity
+-------------
+In order to use the dm-verity feature, you should enable the dm-verity template first.
+Please add the following to your setup line:
+	--templates feature/dm-verity
+
+As the rootfs is read only when dm-verity is enabled, the pkg_postinst_ontarget mechanism
+can't be used. We must decide which specific SoC this rootfs will be used for and set the
+corresponding value to S32G_SOC_VARIANT in your conf/local.conf. So far, the supported
+values are "s32g2" and "s32g3".
+	S32G_SOC_VARIANT ?= "s32g2" or "s32g3"
