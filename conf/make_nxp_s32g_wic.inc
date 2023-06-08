@@ -44,27 +44,32 @@ do_image_wic[postfuncs] += "${@bb.utils.contains('MACHINE_FEATURES', 'omit_atf',
 
 BOOTFS_EXTRA_CMD ?= " \
     set -e; \
-    for plat in ${UBOOT_CONFIG}; do \
+    if echo ${UBOOT_CONFIG} | grep -q s32g; then \
+        plats="$(echo ${UBOOT_CONFIG} | sed 's/_[^ ]*//g' | tr ' ' '\n' | sort -u)"; \
+    else \
+        plats="${UBOOT_CONFIG}" ;\
+    fi; \
+    for plat in ${plats}; do \
         atf_s32="${DEPLOY_DIR_IMAGE}/atf-$plat.s32"; \
         if [ $plat = "s32g3xxaevb" ]; then \
-            plat="evb3"; \
+            plat_abbr="evb3"; \
         elif [ $plat = "s32g2xxaevb" ]; then \
-            plat="evb"; \
+            plat_abbr="evb"; \
         else \
-            plat="$(echo $plat | grep -o '....$')"; \
+            plat_abbr="$(echo $plat | grep -o '....$')"; \
         fi; \
-        ofname="$plat.ustart.img"; \
+        ofname="${plat_abbr}.ustart.img"; \
         cp ustart.img $ofname; \
-        if [ "$plat" = "s32g2xxaevb" ] && [ "${HSE_SEC_ENABLED}" = "1" ]; then \
-            dd if=$atf_s32 of=$ofname bs=512 seek=1 skip=1 conv=notrunc,fsync; \
-            dd if=$atf_s32.signature of=$ofname  bs=512 seek=9 conv=notrunc,fsync; \
+        if [ "${HSE_SEC_ENABLED}" = "1" ]; then \
+            dd_offset=\`cat ${DEPLOY_DIR_IMAGE}/${plat}_dd_offset\`; \
+            dd if=$atf_s32 of=$ofname seek=1 skip=1 conv=notrunc,fsync; \
+            dd if=$atf_s32.signature of=$ofname seek=\`printf "%d" ${dd_offset}\` oflag=seek_bytes conv=notrunc,fsync; \
         else \
-            dd if=$atf_s32 of=$ofname conv=notrunc bs=256 count=1 seek=0; \
-            dd if=$atf_s32 of=$ofname conv=notrunc bs=512 seek=1 skip=1; \
-        fi \
+            dd if=$atf_s32 of=$ofname conv=notrunc seek=512 skip=512 oflag=seek_bytes iflag=skip_bytes; \
+        fi; \
     done; \
     rm -f ustart.img; \
-    if [ $plat = "aptiv" ]; then \
+    if [ $plat = "aptiv_cvc_fl" ]; then \
         mv -f $ofname ustart.img; \
     fi; \
 "
