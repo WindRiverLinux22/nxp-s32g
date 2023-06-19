@@ -168,7 +168,7 @@ If users want to use these devices to boot, the DIP switches on S32G boards
 should be configured correctly. And the following are the DIP switches setting
 for these 3 boot devies:
 
-For S32G2 EVB/S32G3 EVB GEN1:
+For S32G2 EVB/S32G3 EVB:
 
                 eMMC            SD              QSPI
     -------------------------------------------------------
@@ -183,6 +183,9 @@ For S32G2 EVB/S32G3 EVB GEN1:
     SW14        1 on, 2 off     1 on, 2 off     1 on, 2 off
     -------------------------------------------------------
     SW15        1,2 off         1,2 off         1,2 off
+
+    the above "x" means connected, so "1 x x" means pin1 is unused, pin2 and
+    pin3 are connected.
 
 For S32G2 RDB2/S32G3 RDB3:
 
