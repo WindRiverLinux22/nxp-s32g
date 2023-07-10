@@ -11,14 +11,9 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/BSD-3-Clause;md5=550794465ba0ec
 inherit module deploy
 
 URL ?= "git://github.com/nxp-auto-linux/ipc-shm.git;protocol=https"
-BRANCH ?= "release/bsp35.0"
+BRANCH ?= "release/bsp36.0"
 SRC_URI = "${URL};branch=${BRANCH}"
-SRCREV = "48cff2400c268c61ecd60749c4a95ef6aa9b077f"
-
-FILESEXTRAPATHS:prepend:nxp-s32g := "${THISDIR}/files:"
-SRC_URI:append:nxp-s32g = " \
-    file://0001-ipc-shm-update-to-compatible-with-v5.15-kernel-codes.patch \
-"
+SRCREV = "0e37289cb8c62a6da7666842af2942a858e5c862"
 
 S = "${WORKDIR}/git"
 DESTDIR="${D}"
