@@ -893,21 +893,16 @@ found on Flexera) shoul be setup in the following order on user's local host
 machine:
 
 	1. S32 Design Studio 3.4
-	2. S32 Design Studio 3.4 Development Packages for Offline Use,
-	   Support for S32G Family
-	3. Real Time Drivers (RTD) 4.4 version 3.0.0 D2112 (use file
-	   with _updatesite.zip in the name and install through
-	   Extensions and Updates in S32 Design Studio)
-	4. IPCF version 4.5.0 D2201 (use file with _updatesite.zip in
-	   the name and install through Extensions and Updates in
-	   S32 Design Studio)
+	2. SW32G_S32DS_3.4.3_D2112.zip
+	3. SW32_RTD_4.4_4.0.0_DS_updatesite_D2210.zip
+	4. SW32G_IPCF_4.8.0_D2212_updatesite.zip
 
 For detail informations about the above packages setup, installation and
 build steps, please refer to the documents:
 
 	"S32DS_Installation_Guide_3.4.0.pdf"
-	"SW32_RTD_4.4_3.0.0_D2112_ReleaseNotes.pdf"
-	"SW32G_IPCF_4.5.0_D2201_ReleaseNotes.pdf"
+	"SW32_RTD_4.4_4.0.0_D2210_ReleaseNotes.pdf"
+	"SW32G_IPCF_4.8.0_D2212_ReleaseNotes.pdf"
 
 and etc., which can be found in related packages downloaded from flexra.
 
@@ -917,6 +912,37 @@ related documents, then users can find the binary files:
 	"IPCF_Example_S32G274.bin" and "IPCF_Example_S32G399_M7_0.bin"
 
 from S32DS IPCF example project.
+
+NOTE:
+
+1. For S32G3 boards, before compile the M7 side application, there are some
+   modifications should be done as following:
+
+     a. In src/sample.c, remove the "+ 1" in line 333, 336 and 339
+     b. In generate/src/ipcf_Ip_Cfg.c, change
+            .local_shm_addr  = 0x34100000,
+            .remote_shm_addr = 0x34000000,
+        to
+            .local_shm_addr  = 0x34200000,
+            .remote_shm_addr = 0x34100000,
+        in line 91.
+
+   Then build the project and use the output M7 side application binary to
+   test. Or else, the test will fail, and there is a ticket to verdor to track
+   the status of this issue:
+    https://community.nxp.com/t5/S32G/IPCF-v4-8-single-instance-M7-codes-issue-for-S32G3-boards/m-p/1687224#M4119
+
+2. For IPCF v4.8 multi-instance M7 side applications, there are also known
+   issues as following:
+
+     a. it will cause boot failure on RDB2
+     b. it will cause kernel panic on RDB3
+
+   There is a ticket to track the status of the issue:
+    https://community.nxp.com/t5/S32G/IPCF-v4-8-multi-instance-affects-S32G-board-functions-RDB2/m-p/1686793#M4104
+
+   So the multi-instance M7 side applications are not supported by default
+   until the above issues are fixed.
 
 6.6.2 Enable IPCF feature in wrlinux
 ------------------------------------
