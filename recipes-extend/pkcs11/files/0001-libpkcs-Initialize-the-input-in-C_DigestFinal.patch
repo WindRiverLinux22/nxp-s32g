@@ -1,0 +1,32 @@
+From faf56d2d02b423df8eb9d2380123f06a72ac59d4 Mon Sep 17 00:00:00 2001
+From: Kevin Hao <kexin.hao@windriver.com>
+Date: Fri, 14 Jul 2023 21:11:05 +0800
+Subject: [PATCH] libpkcs: Initialize the input in C_DigestFinal()
+
+The 'input' variable may be used without being initialized, the random
+value in it may cause hse_virt_to_dma(input) return an invalid dma
+address and then trigger a segmentation fault.
+
+Upstream-Status: Pending
+
+Signed-off-by: Kevin Hao <kexin.hao@windriver.com>
+---
+ libpkcs/pkcs11_digest.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libpkcs/pkcs11_digest.c b/libpkcs/pkcs11_digest.c
+index c87c2b03ef75..c7e0399d957e 100644
+--- a/libpkcs/pkcs11_digest.c
++++ b/libpkcs/pkcs11_digest.c
+@@ -326,7 +326,7 @@ CK_DEFINE_FUNCTION(CK_RV, C_DigestFinal)(
+ 	struct sessionCtx *sCtx = getSessionCtx(hSession);
+ 	DECLARE_SET_ZERO(hseSrvDescriptor_t, srv_desc);
+ 	hseHashSrv_t *hash_req;
+-	void *input, *output, *output_len;
++	void *input = NULL, *output, *output_len;
+ 	CK_RV rc = CKR_OK;
+ 	int err;
+ 
+-- 
+2.39.2
+
