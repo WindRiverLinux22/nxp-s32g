@@ -1,0 +1,39 @@
+From 8e212745ab6cdeebc4b1a13b6ef9dec68e6eab3c Mon Sep 17 00:00:00 2001
+From: Kevin Hao <kexin.hao@windriver.com>
+Date: Sat, 15 Jul 2023 15:10:14 +0800
+Subject: [PATCH] crypto: hse: Drop the sha256 support
+
+The sha256 may causes the kernel hang in some cases, this is a known
+issue. Drop the sha256 support to workaround this.
+
+Upstream-Status: Pending
+
+Signed-off-by: Kevin Hao <kexin.hao@windriver.com>
+---
+ drivers/crypto/hse/hse-ahash.c | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/drivers/crypto/hse/hse-ahash.c b/drivers/crypto/hse/hse-ahash.c
+index c09dda37a4c5..fe42f9d534bb 100644
+--- a/drivers/crypto/hse/hse-ahash.c
++++ b/drivers/crypto/hse/hse-ahash.c
+@@ -1028,16 +1028,6 @@ static const struct hse_ahash_tpl hse_ahash_algs_tpl[] = {
+ 			.digestsize = SHA224_DIGEST_SIZE,
+ 		},
+ 		.alg_type = HSE_HASH_ALGO_SHA2_224,
+-	}, {
+-		.hash_name = "sha256",
+-		.hash_drv = "sha256-hse",
+-		.hmac_name = "hmac(sha256)",
+-		.hmac_drv = "hmac-sha256-hse",
+-		.blocksize = SHA256_BLOCK_SIZE,
+-		.ahash_tpl.halg = {
+-			.digestsize = SHA256_DIGEST_SIZE,
+-		},
+-		.alg_type = HSE_HASH_ALGO_SHA2_256,
+ 	}, {
+ 		.hash_name = "sha384",
+ 		.hash_drv = "sha384-hse",
+-- 
+2.39.2
+
